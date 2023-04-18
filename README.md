@@ -73,10 +73,11 @@ DATE,TITLE,PDF_FILE,Keyword,Page,Caption
 ```
 
 What does the above file mean?
-It means 4 search results were found in total.
-One result was found for `hello` on page 2 of the `1.pdf` file.
-One result was found for `world` on page 2 of the `1.pdf` file.
-One result was found for `world` on page 4 of the `3.pdf` file.
-One result was found for `world` on page 7 of the `3.pdf` file.
-No search results were found in `2.pdf`, which is why it's not present in the results.
-The last bit of text, with the column titles of `Caption` is a copy of the whole page's text that the keyword was found in.
+
+- It means 4 search results were found in total.
+- One result was found for `hello` on page 2 of the `1.pdf` file.
+- One result was found for `world` on page 2 of the `1.pdf` file.
+- One result was found for `world` on page 4 of the `3.pdf` file.
+- One result was found for `world` on page 7 of the `3.pdf` file.
+- No search results were found in `2.pdf`, which is why it's not present in the results.
+- The last bit of text, with the column titles of `Caption` is a copy of the whole page's text that the keyword was found in.
