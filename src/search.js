@@ -9,7 +9,7 @@ function searchPagesForKeywords({ pages, keywords }) {
       let keyword = keywords[k];
       const f = fuzzy(keyword, page, { returnMatchData: true });
       if (f.score >= 0.95) {
-        matches.push({ keyword, page: p + 1 });
+        matches.push({ keyword, page: p + 1, caption: f.original });
       }
     }
   }

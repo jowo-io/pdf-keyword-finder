@@ -3,21 +3,25 @@ import { createCsvWriter, extractPathsFromCsv } from "./csv.js";
 import { extractPageTextFromPdfs } from "./pdf.js";
 import { searchPagesForKeywords } from "./search.js";
 
-const csvWriter = createCsvWriter(args.output);
+const { rows, columnNames } = await extractPathsFromCsv({
+  csvPath: args.csvFile,
+  columnName: args.pdfColumn,
+});
 
-const pdfPaths = await extractPathsFromCsv({
-  csvPath: args.csv,
-  columnName: args.column,
+const csvWriter = createCsvWriter({
+  outputFilePath: args.outputFile,
+  extraColumnNames: columnNames,
 });
 
 async function start() {
-  if (!pdfPaths.length) return;
+  if (!rows.length) return;
 
-  const pdfPath = pdfPaths.pop();
-  console.log(`Searching pdf file: '${pdfPath}'...`);
+  const { path, row } = rows.pop();
+  console.log(`Searching pdf file: '${path}'...`);
+
   try {
     const pdfPageText = await extractPageTextFromPdfs({
-      path: pdfPath,
+      path: path,
       dir: args.pdfDir,
     });
 
@@ -28,19 +32,26 @@ async function start() {
 
     if (searchResults.length) {
       await csvWriter.writeRecords(
-        searchResults.map(({ keyword, page }) => ({
+        searchResults.map(({ keyword, page, caption }) => ({
+          ...row,
           keyword,
           page,
-          file: pdfPath,
+          caption,
         }))
       );
+      console.log(
+        "Done",
+        `Matched ${searchResults.length} ${
+          searchResults.length === 1 ? "keyword" : "keywords"
+        }`
+      );
+    } else {
+      console.log("Done", "No matches found");
     }
-
-    console.log("Done");
   } catch (e) {
     console.log("Failed", e);
   } finally {
-    await start(pdfPath);
+    await start();
   }
 }
 

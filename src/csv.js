@@ -4,22 +4,24 @@ import { createObjectCsvWriter } from "csv-writer";
 
 const outputDir = "bin/output";
 
-function createCsvWriter(outputFilePath) {
+function createCsvWriter({ outputFilePath, extraColumnNames = {} }) {
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
   }
   const csvWriter = createObjectCsvWriter({
     path: `${outputDir}/${outputFilePath}`,
     header: [
+      ...extraColumnNames.map((cn) => ({ id: cn, title: cn })),
       { id: "keyword", title: "Keyword" },
       { id: "page", title: "Page" },
-      { id: "file", title: "File" },
+      { id: "caption", title: "Caption" },
     ],
   });
   return csvWriter;
 }
 
 function extractPathsFromCsv({ csvPath, columnName }) {
+  let columnNames;
   let rows = [];
   let index;
   let inputStream = fs.createReadStream(`bin/${csvPath}`, "utf8");
@@ -35,20 +37,31 @@ function extractPathsFromCsv({ csvPath, columnName }) {
       .on("data", function (row) {
         if (typeof index === "undefined") {
           index = row.indexOf(columnName);
+          columnNames = row;
+          console.log("columnName", columnName);
           if (index === -1) {
             reject(
               `A column with the title of '${columnName}' could not be found in '${csvPath}'`
             );
           }
         } else {
-          rows.push(row[index]);
+          rows.push({
+            path: row[index],
+            row: columnNames.reduce(
+              (acc, n, i) => ({
+                ...acc,
+                [n]: row[i],
+              }),
+              {}
+            ),
+          });
         }
       })
       .on("end", function () {
-        resolve(rows);
+        resolve({ rows, columnNames });
       })
       .on("error", function (e) {
-        reject(err);
+        reject(e);
       });
   });
 }
