@@ -23,9 +23,14 @@ const args = yargs(process.argv.slice(2))
     },
     keyword: {
       description: "",
-      string: true,
+      array: true,
       required: true,
       alias: "k",
+    },
+    pdfDir: {
+      description: "",
+      string: true,
+      alias: "p",
     },
   }).argv;
 

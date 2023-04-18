@@ -16,21 +16,25 @@ async function start() {
   const pdfPath = pdfPaths.pop();
   console.log(`Searching pdf file: '${pdfPath}'...`);
   try {
-    const pdfPageText = await extractPageTextFromPdfs(pdfPath);
+    const pdfPageText = await extractPageTextFromPdfs({
+      path: pdfPath,
+      dir: args.pdfDir,
+    });
 
     const searchResults = searchPagesForKeywords({
       pages: pdfPageText,
       keywords: args.keyword,
     });
-    console.log(JSON.stringify(searchResults, null, 2));
 
-    await csvWriter.writeRecords(
-      searchResults.map(({ keyword, page }) => ({
-        keyword,
-        page,
-        file: pdfPath,
-      }))
-    );
+    if (searchResults.length) {
+      await csvWriter.writeRecords(
+        searchResults.map(({ keyword, page }) => ({
+          keyword,
+          page,
+          file: pdfPath,
+        }))
+      );
+    }
 
     console.log("Done");
   } catch (e) {
