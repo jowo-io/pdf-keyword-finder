@@ -9,7 +9,7 @@ This script requires NodeJS to run. You can download it here: [https://nodejs.or
 Once you have NodeJS installed, open a terminal window, `cd` into this script's directory and run:
 
 ```
-npm run install
+npm install
 ```
 
 > guide on `cd` ("change directory") can be found [here](http://modulesunraveled.com/command-line-beginners/moving-and-out-directories-cd-command)
